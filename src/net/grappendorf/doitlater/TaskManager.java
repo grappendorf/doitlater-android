@@ -1,0 +1,80 @@
+/*
+ * This file is part of the Do it later! Android application.
+ *
+ * Copyright 2011-2012 Dirk Grappendorf, www.grappendorf.net
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package net.grappendorf.doitlater;
+
+import android.app.Activity;
+import android.os.Handler;
+import com.google.api.services.tasks.model.Task;
+
+public interface TaskManager
+{
+	/**
+	 * Fetch a list of all tasks in the specified task list. Only the task id plus the attributes
+	 * specified in fields are retrieved.
+	 * This method is asynchronous and the result is passed backed through the provided callback as the
+	 * message object. In case of an error, the message object will be null.
+	 *
+	 * @param taskList The name of the task list to fetch
+	 * @param activity The activity that calls the service method
+	 * @param callback A handler to be called back with the retrieved task list
+	 */
+	void listTasks(String taskList, String[] fields, Activity activity, Handler callback);
+
+	/**
+	 * Retrieve a specific task. This method is asynchronous and the result is passed backed
+	 * through the provided callback as the message object. In case of an error, the message
+	 * object will be null.
+	 *
+	 * @param taskList The name of the task that contains the task
+	 * @param taskId The id of the task to fetch
+	 * @param activity The activity that calls the service method
+	 * @param callback A handler to be called back with the retrieved task list
+	 */
+	void getTask(String taskList, String taskId, Activity activity, Handler callback);
+
+	/**
+	 * Update the specific task. This method is asynchronous and the updated task is passed back
+	 * through the provided callback as the message object. In case of an error, the message
+	 * object will be null.
+	 *
+	 * @param taskList The name of the task that contains the task
+	 * @param task The task containing the updated attributes
+	 * @param activity The activity that calls the service method
+	 * @param callback A handler to be called back with the retrieved task list
+	 */
+	void updateTask(String taskList, Task task, Activity activity, Handler callback);
+
+	/**
+	 * Delete the specified task. This method is asynchronous and the id of the deleted task is
+	 * passed back through the provided callback as the message object. In case of an error, the
+	 * message object will be null.
+	 *
+	 * @param taskList The name of the task that contains the task
+	 * @param taskId The id of the task to delete
+	 * @param activity The activity that calls the service method
+	 * @param callback A handler to be called back with the retrieved task list
+	 */
+	void deleteTask(String taskList, String taskId, Activity activity, Handler callback);
+
+	void chooseAccount(Activity activity);
+
+	void onRequestAuthenticateResult(Activity activity, int requestCode);
+
+	void debugDump();
+}

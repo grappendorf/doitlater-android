@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<item android:id="@+id/switch_account" android:title="@string/switch_account" android:icon="@drawable/people"/>
+	<item android:id="@+id/debug_dump" android:title="@string/debug_dump" android:icon="@drawable/bug"/>
+	<item android:id="@+id/preferences" android:title="@string/preferences"  android:icon="@drawable/preferences"/>
+	<item android:id="@+id/exit" android:title="@string/exit"  android:icon="@drawable/exit"/>
+
+</menu>

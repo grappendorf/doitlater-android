@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Do it later!</string>
+	<string name="dummy_task_title">Diese Anwendung fertigstellen</string>
+	<string name="dummy_task_description">ASAP</string>
+	<string name="completed_on">Beendet am %1$s</string>
+	<string name="due_on">Fällig am %1$s</string>
+	<string name="open_ended">Unbefristet</string>
+	<string name="unknown_date">-</string>
+	<string name="loading">Lade…</string>
+	<string name="saving">Speichern…</string>
+	<string name="name">Name</string>
+	<string name="task">Aufgabe</string>
+	<string name="due_date">Fälligkeitsdatum</string>
+	<string name="due_date_popup">Due date popup</string>
+	<string name="notes">Notizen</string>
+	<string name="description">Beschreibung</string>
+	<string name="debug_dump">Debug Dump</string>
+	<string name="save">Speichern</string>
+	<string name="cancel">Abbrechen</string>
+	<string name="save_error">Fehler beim Speichern</string>
+	<string name="reload">Aktualisieren</string>
+	<string name="add">Hinzufügen</string>
+	<string name="filter">Filtern</string>
+	<string name="sort">Sortieren</string>
+	<string name="switch_account">Konto wechseln</string>
+	<string name="exit">Exit</string>
+	<string name="delete">Löschen</string>
+	<string name="edit">Bearbeiten</string>
+	<string name="complete">Beenden</string>
+	<string name="delete_task">Aufgabe löschen</string>
+	<string name="delete_task_confirm">Soll die Aufgabe \"%1$s\" wirklich gelöscht werden?</string>
+	<string name="deleting">Löschen…</string>
+	<string name="error_input_field_validation">Eingabefehler</string>
+	<string name="error_invalud_due_date">Bitte geben Sie ein gültiges Fälligkeitsdatum ein</string>
+	<string name="title">Titel</string>
+	<string name="preferences">Einstellungen</string>
+	<string name="api_key">API Key</string>
+</resources>
