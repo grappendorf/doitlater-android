@@ -19,11 +19,14 @@
 package net.grappendorf.doitlater;
 
 import android.app.Application;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
 
-public class DoItLaterApplication extends android.app.Application
+public class DoItLaterApplication extends android.app.Application implements SharedPreferences.OnSharedPreferenceChangeListener
 {
 	public static final String NAME = "Do it later!";
 
@@ -43,8 +46,23 @@ public class DoItLaterApplication extends android.app.Application
 	@Override
 	public void onCreate()
 	{
+		super.onCreate();
 		application = this;
 		dateFormat = android.text.format.DateFormat.getDateFormat(this);
+		taskManager = new TaskManagerImpl(getApplicationContext());
+		PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+	}
+
+	@Override
+	public void onTerminate()
+	{
+		super.onTerminate();
+		PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s)
+	{
 		taskManager = new TaskManagerImpl(getApplicationContext());
 	}
 

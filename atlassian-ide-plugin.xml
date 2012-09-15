@@ -1,6 +1,13 @@
 <atlassian-ide-plugin>
   <project-configuration>
-    <servers />
-    <default-jira-server>8925f204-31da-4e83-aa9d-fa00567ebad6</default-jira-server>
+    <servers>
+      <jira>
+        <server-id>8882e717-3f35-4197-9471-fb48738e0577</server-id>
+        <name>grappendorf</name>
+        <url>https://grappendorf-home/jira</url>
+        <shared>false</shared>
+      </jira>
+    </servers>
+    <default-jira-server>8882e717-3f35-4197-9471-fb48738e0577</default-jira-server>
   </project-configuration>
 </atlassian-ide-plugin>
