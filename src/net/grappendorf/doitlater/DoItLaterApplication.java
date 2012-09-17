@@ -21,6 +21,9 @@ package net.grappendorf.doitlater;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.text.Html;
+import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.Log;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -86,5 +89,18 @@ public class DoItLaterApplication extends android.app.Application implements Sha
 	public static Date parseDate(String dateString) throws ParseException
 	{
 		return dateFormat.parse(dateString);
+	}
+
+	@SuppressWarnings("unused")
+	public static Spanned getStyledString(int resId, Object... formatArgs)
+	{
+		for (int i = 0; i < formatArgs.length; ++i)
+		{
+			if (formatArgs[i] instanceof String)
+			{
+				formatArgs[i] = TextUtils.htmlEncode((String) formatArgs[i]);
+			}
+		}
+		return Html.fromHtml(application.getString(resId, formatArgs));
 	}
 }

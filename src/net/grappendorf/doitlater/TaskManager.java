@@ -41,10 +41,10 @@ public interface TaskManager
 	 * through the provided callback as the message object. In case of an error, the message
 	 * object will be null.
 	 *
-	 * @param taskList The name of the task that contains the task
+	 * @param taskList The name of the task list that contains the task
 	 * @param taskId The id of the task to fetch
 	 * @param activity The activity that calls the service method
-	 * @param callback A handler to be called back with the retrieved task list
+	 * @param callback A handler to be called back with the retrieved task
 	 */
 	void getTask(String taskList, String taskId, Activity activity, Handler callback);
 
@@ -53,10 +53,10 @@ public interface TaskManager
 	 * through the provided callback as the message object. In case of an error, the message
 	 * object will be null.
 	 *
-	 * @param taskList The name of the task that contains the task
+	 * @param taskList The name of the task list that contains the task
 	 * @param task The task containing the updated attributes
 	 * @param activity The activity that calls the service method
-	 * @param callback A handler to be called back with the retrieved task list
+	 * @param callback A handler to be called back with the updated task
 	 */
 	void updateTask(String taskList, Task task, Activity activity, Handler callback);
 
@@ -65,12 +65,24 @@ public interface TaskManager
 	 * passed back through the provided callback as the message object. In case of an error, the
 	 * message object will be null.
 	 *
-	 * @param taskList The name of the task that contains the task
+	 * @param taskList The name of the task list that contains the task
 	 * @param taskId The id of the task to delete
 	 * @param activity The activity that calls the service method
-	 * @param callback A handler to be called back with the retrieved task list
+	 * @param callback A handler to be called back with the id of the deleted task
 	 */
 	void deleteTask(String taskList, String taskId, Activity activity, Handler callback);
+
+	/**
+	 * Complete the specific task. This method is asynchronous and the completed task is passed
+	 * back through the provided callback as the message object. In case of an error, the message
+	 * object will be null.
+	 *
+	 * @param taskList The name of the task list that contains the task
+	 * @param taskId The id of the task to delete
+	 * @param activity The activity that calls the service method
+	 * @param callback A handler to be called back with the completed task
+	 */
+	void completeTask(String taskList, String taskId, Activity activity, Handler callback);
 
 	void chooseAccount(Activity activity);
 

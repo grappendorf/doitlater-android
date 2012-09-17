@@ -30,10 +30,15 @@
 	<string name="complete">Complete</string>
 	<string name="delete_task">Delete Task</string>
 	<string name="delete_task_confirm">Should the task \"%1$s\" really be deleted?</string>
+	<string name="delete_task_error">The task couldn\'t be deleted</string>
 	<string name="deleting">Deleting…</string>
 	<string name="error_input_field_validation">Input field error</string>
 	<string name="error_invalud_due_date">Please enter a valid due date</string>
 	<string name="title">Title</string>
 	<string name="preferences">Preferences</string>
 	<string name="api_key">API Key</string>
+	<string name="complete_task">Complete Task</string>
+	<string name="complete_task_confirm">Should the task \"%1$s\" really be completed?</string>
+	<string name="complete_task_error">The task couldn\'t be completed</string>
+	<string name="completing">Completing…</string>
 </resources>

@@ -33,6 +33,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 import com.google.api.services.tasks.model.Task;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -110,6 +111,8 @@ public class TaskListActivity extends ListActivity
 				break;
 
 			case R.id.complete:
+				onComplete(((Task) getListAdapter().getItem(info.position)).getId(),
+						((Task) getListAdapter().getItem(info.position)).getTitle());
 				break;
 
 			case R.id.delete:
@@ -159,6 +162,13 @@ public class TaskListActivity extends ListActivity
 	{
 	}
 
+	private void onEdit(String taskId)
+	{
+		Intent intent = new Intent(this, TaskEditorActivity.class);
+		intent.putExtra("taskId", taskId);
+		startActivityForResult(intent, REQUEST_TASK_EDIT);
+	}
+
 	private void onDelete(final String taskId, String taskTitle)
 	{
 		new AlertDialog.Builder(this)
@@ -187,7 +197,7 @@ public class TaskListActivity extends ListActivity
 								}
 								else
 								{
-									showErrorMessageInList();
+									Toast.makeText(activity.getApplicationContext(), R.string.delete_task_error, Toast.LENGTH_LONG).show();
 								}
 							}
 						});
@@ -196,11 +206,41 @@ public class TaskListActivity extends ListActivity
 				.show();
 	}
 
-	private void onEdit(String taskId)
+	private void onComplete(final String taskId, String taskTitle)
 	{
-		Intent intent = new Intent(this, TaskEditorActivity.class);
-		intent.putExtra("taskId", taskId);
-		startActivityForResult(intent, REQUEST_TASK_EDIT);
+		new AlertDialog.Builder(this)
+				.setIcon(R.drawable.task)
+				.setTitle(R.string.complete_task)
+				.setMessage(getResources().getString(R.string.complete_task_confirm, taskTitle))
+				.setNegativeButton(R.string.cancel, null)
+				.setPositiveButton(R.string.complete, new DialogInterface.OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i)
+					{
+						((DoItLaterApplication) getApplication()).getTaskManager().completeTask("@default", taskId, activity, new Handler()
+						{
+							@Override
+							@SuppressWarnings("unchecked")
+							public void handleMessage(Message msg)
+							{
+								if (msg.obj != null)
+								{
+									Task task = (Task) msg.obj;
+									if (task != null)
+									{
+										completeTaskItem(task);
+									}
+								}
+								else
+								{
+									Toast.makeText(activity.getApplicationContext(), R.string.complete_task_error, Toast.LENGTH_LONG).show();
+								}
+							}
+						});
+					}
+				})
+				.show();
 	}
 
 	private void loadTaskItems()
@@ -268,6 +308,24 @@ public class TaskListActivity extends ListActivity
 		if (taskIndex >= 0)
 		{
 			tasks.remove(taskIndex);
+			((ArrayAdapter<Task>) getListAdapter()).notifyDataSetChanged();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void completeTaskItem(final Task task)
+	{
+		int taskIndex = Iterables.indexOf(tasks, new Predicate<Task>()
+		{
+			@Override
+			public boolean apply(@Nullable Task aTask)
+			{
+				return aTask != null && aTask.getId().equals(task.getId());
+			}
+		});
+		if (taskIndex >= 0)
+		{
+			tasks.set(taskIndex, task);
 			((ArrayAdapter<Task>) getListAdapter()).notifyDataSetChanged();
 		}
 	}

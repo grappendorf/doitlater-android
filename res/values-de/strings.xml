@@ -30,10 +30,15 @@
 	<string name="complete">Beenden</string>
 	<string name="delete_task">Aufgabe löschen</string>
 	<string name="delete_task_confirm">Soll die Aufgabe \"%1$s\" wirklich gelöscht werden?</string>
+	<string name="delete_task_error">Die Aufgabe konnte nicht gelöscht werden</string>
 	<string name="deleting">Löschen…</string>
 	<string name="error_input_field_validation">Eingabefehler</string>
 	<string name="error_invalud_due_date">Bitte geben Sie ein gültiges Fälligkeitsdatum ein</string>
 	<string name="title">Titel</string>
 	<string name="preferences">Einstellungen</string>
 	<string name="api_key">API Key</string>
+	<string name="complete_task">Aufgabe beenden</string>
+	<string name="complete_task_confirm">Soll die Aufgabe \"%1$s\" wirklich beendet werden?</string>
+	<string name="complete_task_error">Die Aufgabe konnte nicht beendet werden</string>
+	<string name="completing">Beenden…</string>
 </resources>

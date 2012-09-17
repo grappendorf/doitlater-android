@@ -93,6 +93,11 @@ public class TaskManagerFake implements TaskManager
 	}
 
 	@Override
+	public void completeTask(String taskList, String taskId, Activity activity, Handler callback)
+	{
+	}
+
+	@Override
 	public void chooseAccount(Activity activity)
 	{
 	}

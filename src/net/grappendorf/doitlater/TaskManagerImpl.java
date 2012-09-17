@@ -36,6 +36,7 @@ import com.google.api.client.googleapis.services.GoogleKeyInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.DateTime;
 import com.google.api.services.tasks.Tasks;
 import com.google.api.services.tasks.model.Task;
 import java.io.IOException;
@@ -329,6 +330,35 @@ public class TaskManagerImpl implements TaskManager
 				{
 					tasksService.tasks().delete(taskList, taskId).execute();
 					callback.sendMessage(callback.obtainMessage(0, taskId));
+					asyncTaskByActivity.remove(activity);
+					onRequestCompleted();
+				}
+				catch (IOException e)
+				{
+					handleApiException(activity, callback, e);
+				}
+				return null;
+			}
+		};
+		asyncTaskByActivity.put(activity, asyncTask);
+		executeAsyncTaskWhenAuthenticated(activity);
+	}
+
+	@Override
+	public void completeTask(final String taskList, final String taskId, final Activity activity, final Handler callback)
+	{
+		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.completing)
+		{
+			@Override
+			protected Void doInBackground(Void... voids)
+			{
+				try
+				{
+					Task task = tasksService.tasks().get(taskList, taskId).execute();
+					task.setCompleted(new DateTime(System.currentTimeMillis(), 0));
+					task.setStatus("completed");
+					Task result = tasksService.tasks().update(taskList, task.getId(), task).execute();
+					callback.sendMessage(callback.obtainMessage(0, result));
 					asyncTaskByActivity.remove(activity);
 					onRequestCompleted();
 				}
