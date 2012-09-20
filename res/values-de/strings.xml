@@ -41,4 +41,6 @@
 	<string name="complete_task_confirm">Soll die Aufgabe \"%1$s\" wirklich beendet werden?</string>
 	<string name="complete_task_error">Die Aufgabe konnte nicht beendet werden</string>
 	<string name="completing">Beenden…</string>
+	<string name="create">Erstellen</string>
+	<string name="creating">Erstellen…</string>
 </resources>

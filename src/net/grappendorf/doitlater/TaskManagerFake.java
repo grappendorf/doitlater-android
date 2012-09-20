@@ -98,6 +98,11 @@ public class TaskManagerFake implements TaskManager
 	}
 
 	@Override
+	public void createTask(String taskList, Task task, String previousTaskId, TaskEditorActivity activity, Handler callback)
+	{
+	}
+
+	@Override
 	public void chooseAccount(Activity activity)
 	{
 	}

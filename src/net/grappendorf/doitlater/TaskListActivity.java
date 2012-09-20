@@ -44,6 +44,8 @@ public class TaskListActivity extends ListActivity
 {
 	private static final int REQUEST_TASK_EDIT = GlobalActivityCodes.REQUEST_FIRST_USER;
 
+	private static final int REQUEST_TASK_CREATE = GlobalActivityCodes.REQUEST_FIRST_USER + 1;
+
 	private Activity activity;
 
 	private List<Task> tasks;
@@ -107,16 +109,16 @@ public class TaskListActivity extends ListActivity
 		switch (item.getItemId())
 		{
 			case R.id.edit:
-				onEdit(((Task) getListAdapter().getItem(info.position)).getId());
+				onEditTask(((Task) getListAdapter().getItem(info.position)).getId());
 				break;
 
 			case R.id.complete:
-				onComplete(((Task) getListAdapter().getItem(info.position)).getId(),
+				onCompleteTask(((Task) getListAdapter().getItem(info.position)).getId(),
 						((Task) getListAdapter().getItem(info.position)).getTitle());
 				break;
 
 			case R.id.delete:
-				onDelete(((Task) getListAdapter().getItem(info.position)).getId(),
+				onDeleteTask(((Task) getListAdapter().getItem(info.position)).getId(),
 						((Task) getListAdapter().getItem(info.position)).getTitle());
 				break;
 		}
@@ -126,7 +128,7 @@ public class TaskListActivity extends ListActivity
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id)
 	{
-		onEdit(((Task) getListAdapter().getItem(position)).getId());
+		onEditTask(((Task) getListAdapter().getItem(position)).getId());
 	}
 
 	@Override
@@ -139,15 +141,16 @@ public class TaskListActivity extends ListActivity
 				break;
 
 			case REQUEST_TASK_EDIT:
-				switch (resultCode)
+				if (resultCode == RESULT_OK)
 				{
-					case GlobalActivityCodes.RESULT_SAVED:
-						updateTaskItem(data.getStringExtra("taskId"));
-						break;
+					updateTaskItem(data.getStringExtra("taskId"));
+				}
+				break;
 
-					case GlobalActivityCodes.RESULT_DELETED:
-						deleteTaskItem(data.getStringExtra("taskId"));
-						break;
+			case REQUEST_TASK_CREATE:
+				if (resultCode == RESULT_OK)
+				{
+					ceateTaskItem(data.getStringExtra("taskId"));
 				}
 				break;
 		}
@@ -158,18 +161,24 @@ public class TaskListActivity extends ListActivity
 		loadTaskItems();
 	}
 
-	public void onAdd(@SuppressWarnings("unused") View source)
+	public void onCreateTask(@SuppressWarnings("unused") View source)
 	{
+		Intent intent = new Intent(this, TaskEditorActivity.class);
+		if (tasks.size() > 0)
+		{
+			intent.putExtra("lastTaskId", tasks.get(tasks.size() - 1).getId());
+		}
+		startActivityForResult(intent, REQUEST_TASK_CREATE);
 	}
 
-	private void onEdit(String taskId)
+	private void onEditTask(String taskId)
 	{
 		Intent intent = new Intent(this, TaskEditorActivity.class);
 		intent.putExtra("taskId", taskId);
 		startActivityForResult(intent, REQUEST_TASK_EDIT);
 	}
 
-	private void onDelete(final String taskId, String taskTitle)
+	private void onDeleteTask(final String taskId, String taskTitle)
 	{
 		new AlertDialog.Builder(this)
 				.setIcon(R.drawable.task)
@@ -206,7 +215,7 @@ public class TaskListActivity extends ListActivity
 				.show();
 	}
 
-	private void onComplete(final String taskId, String taskTitle)
+	private void onCompleteTask(final String taskId, String taskTitle)
 	{
 		new AlertDialog.Builder(this)
 				.setIcon(R.drawable.task)
@@ -289,6 +298,24 @@ public class TaskListActivity extends ListActivity
 						tasks.set(taskIndex, task);
 						((ArrayAdapter<Task>) getListAdapter()).notifyDataSetChanged();
 					}
+				}
+			}
+		});
+	}
+
+	private void ceateTaskItem(String taskId)
+	{
+		((DoItLaterApplication) getApplication()).getTaskManager().getTask("@default", taskId, this, new Handler()
+		{
+			@Override
+			@SuppressWarnings("unchecked")
+			public void handleMessage(Message msg)
+			{
+				if (msg.obj != null)
+				{
+					Task task = (Task) msg.obj;
+					tasks.add(task);
+					((ArrayAdapter<Task>) getListAdapter()).notifyDataSetChanged();
 				}
 			}
 		});

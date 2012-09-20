@@ -41,4 +41,6 @@
 	<string name="complete_task_confirm">Should the task \"%1$s\" really be completed?</string>
 	<string name="complete_task_error">The task couldn\'t be completed</string>
 	<string name="completing">Completing…</string>
+	<string name="create">Create</string>
+	<string name="creating">Creating…</string>
 </resources>

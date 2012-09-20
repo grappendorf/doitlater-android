@@ -18,17 +18,9 @@
 
 package net.grappendorf.doitlater;
 
-import android.app.Activity;
-
 public interface GlobalActivityCodes
 {
 	public static final int TASK_MANAGER_REQUEST_AUTHENTICATE = 0;
 
 	public static final int REQUEST_FIRST_USER = 1;
-
-	public static final int RESULT_SAVED = Activity.RESULT_FIRST_USER + 0;
-
-	public static final int RESULT_DELETED = Activity.RESULT_FIRST_USER + 1;
-
-	public static final int RESULT_FIRST_USER = Activity.RESULT_FIRST_USER + 2;
 }

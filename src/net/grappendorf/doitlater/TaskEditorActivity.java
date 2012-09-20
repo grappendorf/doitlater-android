@@ -28,10 +28,7 @@ import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.*;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.tasks.model.Task;
 import java.text.ParseException;
@@ -54,23 +51,32 @@ public class TaskEditorActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.task_editor);
+		setResult(RESULT_CANCELED);
 		completed = (CheckBox) findViewById(R.id.completed);
 		title = (EditText) findViewById(R.id.title);
 		dueDate = (EditText) findViewById(R.id.due_date);
 		notes = (EditText) findViewById(R.id.notes);
 		String taskId = getIntent().getStringExtra("taskId");
-		((DoItLaterApplication) getApplication()).getTaskManager().getTask("@default", taskId, this, new Handler()
+		if (taskId != null)
 		{
-			@Override
-			public void handleMessage(Message msg)
+			((DoItLaterApplication) getApplication()).getTaskManager().getTask("@default", taskId, this, new Handler()
 			{
-				task = (Task) msg.obj;
-				updateCompletedView();
-				updateTitleView();
-				updateDueDateView();
-				updateNotesView();
-			}
-		});
+				@Override
+				public void handleMessage(Message msg)
+				{
+					task = (Task) msg.obj;
+					updateCompletedView();
+					updateTitleView();
+					updateDueDateView();
+					updateNotesView();
+				}
+			});
+		}
+		else
+		{
+			((Button) findViewById(R.id.save)).setText(R.string.create);
+			task = new Task();
+		}
 	}
 
 	@Override
@@ -133,29 +139,65 @@ public class TaskEditorActivity extends Activity
 			updateTaskCompleted();
 			updateTaskDue();
 			updateTaskNotes();
-			((DoItLaterApplication) getApplication()).getTaskManager().updateTask("@default", task, this, new Handler()
+			if (task.getId() != null)
 			{
-				@Override
-				public void handleMessage(Message msg)
-				{
-					if (msg.obj != null)
-					{
-						Intent intent = new Intent();
-						intent.putExtra("taskId", task.getId());
-						setResult(GlobalActivityCodes.RESULT_SAVED, intent);
-						finish();
-					}
-					else
-					{
-						Toast.makeText(getApplicationContext(), R.string.save_error, Toast.LENGTH_LONG).show();
-					}
-				}
-			});
+				updateTask();
+			}
+			else
+			{
+				createTask();
+			}
 		}
 		catch (ValidationException e)
 		{
 			Toast.makeText(this, e.getErrorResourceId(), Toast.LENGTH_LONG).show();
 		}
+	}
+
+	private void updateTask()
+	{
+		((DoItLaterApplication) getApplication()).getTaskManager().updateTask("@default", task, this, new Handler()
+		{
+			@Override
+			public void handleMessage(Message msg)
+			{
+				if (msg.obj != null)
+				{
+					Intent intent = new Intent();
+					intent.putExtra("taskId", task.getId());
+					setResult(RESULT_OK, intent);
+					finish();
+				}
+				else
+				{
+					Toast.makeText(getApplicationContext(), R.string.save_error, Toast.LENGTH_LONG).show();
+				}
+			}
+		});
+	}
+
+	private void createTask()
+	{
+        String previousTaskId = getIntent().getStringExtra("lastTaskId");
+        ((DoItLaterApplication) getApplication()).getTaskManager().createTask("@default", task, previousTaskId, this, new Handler()
+		{
+			@Override
+			public void handleMessage(Message msg)
+			{
+				if (msg.obj != null)
+				{
+                    task = (Task) msg.obj;
+					Intent intent = new Intent();
+					intent.putExtra("taskId", task.getId());
+					setResult(RESULT_OK, intent);
+					finish();
+				}
+				else
+				{
+					Toast.makeText(getApplicationContext(), R.string.save_error, Toast.LENGTH_LONG).show();
+				}
+			}
+		});
 	}
 
 	public void onCancel(@SuppressWarnings("unused") View source)
