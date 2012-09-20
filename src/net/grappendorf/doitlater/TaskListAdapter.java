@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.google.api.services.tasks.model.Task;
+
 import java.util.List;
 
 public class TaskListAdapter extends ArrayAdapter<Task>
@@ -94,16 +95,14 @@ public class TaskListAdapter extends ArrayAdapter<Task>
 			dueOrCompletedText.append(
 					String.format(getContext().getString(R.string.completed_on),
 							DoItLaterApplication.formatDate(task.getCompleted())));
-		}
-		else
+		} else
 		{
 			if (task.getDue() != null)
 			{
 				dueOrCompletedText.append(
 						String.format(getContext().getString(R.string.due_on),
 								DoItLaterApplication.formatDate(task.getDue())));
-			}
-			else
+			} else
 			{
 				dueOrCompletedText.append(getContext().getString(R.string.open_ended));
 			}

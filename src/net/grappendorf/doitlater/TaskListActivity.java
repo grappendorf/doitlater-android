@@ -37,6 +37,7 @@ import android.widget.Toast;
 import com.google.api.services.tasks.model.Task;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+
 import javax.annotation.Nullable;
 import java.util.List;
 

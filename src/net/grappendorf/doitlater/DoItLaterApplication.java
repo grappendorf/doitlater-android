@@ -24,7 +24,7 @@ import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;

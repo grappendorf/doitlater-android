@@ -31,6 +31,7 @@ import android.view.View;
 import android.widget.*;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.tasks.model.Task;
+
 import java.text.ParseException;
 import java.util.Calendar;
 
@@ -71,8 +72,7 @@ public class TaskEditorActivity extends Activity
 					updateNotesView();
 				}
 			});
-		}
-		else
+		} else
 		{
 			((Button) findViewById(R.id.save)).setText(R.string.create);
 			task = new Task();
@@ -142,8 +142,7 @@ public class TaskEditorActivity extends Activity
 			if (task.getId() != null)
 			{
 				updateTask();
-			}
-			else
+			} else
 			{
 				createTask();
 			}
@@ -167,8 +166,7 @@ public class TaskEditorActivity extends Activity
 					intent.putExtra("taskId", task.getId());
 					setResult(RESULT_OK, intent);
 					finish();
-				}
-				else
+				} else
 				{
 					Toast.makeText(getApplicationContext(), R.string.save_error, Toast.LENGTH_LONG).show();
 				}
@@ -178,21 +176,20 @@ public class TaskEditorActivity extends Activity
 
 	private void createTask()
 	{
-        String previousTaskId = getIntent().getStringExtra("lastTaskId");
-        ((DoItLaterApplication) getApplication()).getTaskManager().createTask("@default", task, previousTaskId, this, new Handler()
+		String previousTaskId = getIntent().getStringExtra("lastTaskId");
+		((DoItLaterApplication) getApplication()).getTaskManager().createTask("@default", task, previousTaskId, this, new Handler()
 		{
 			@Override
 			public void handleMessage(Message msg)
 			{
 				if (msg.obj != null)
 				{
-                    task = (Task) msg.obj;
+					task = (Task) msg.obj;
 					Intent intent = new Intent();
 					intent.putExtra("taskId", task.getId());
 					setResult(RESULT_OK, intent);
 					finish();
-				}
-				else
+				} else
 				{
 					Toast.makeText(getApplicationContext(), R.string.save_error, Toast.LENGTH_LONG).show();
 				}
@@ -222,8 +219,7 @@ public class TaskEditorActivity extends Activity
 		{
 			task.setCompleted(new DateTime(System.currentTimeMillis(), 0));
 			task.setStatus("completed");
-		}
-		else if (! completed.isChecked())
+		} else if (!completed.isChecked())
 		{
 			task.setCompleted(null);
 			task.setStatus("needsAction");
@@ -235,7 +231,7 @@ public class TaskEditorActivity extends Activity
 		title.setText(task.getTitle());
 		title.setPaintFlags(completed.isChecked() ?
 				title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG :
-				title.getPaintFlags() & ~ Paint.STRIKE_THRU_TEXT_FLAG);
+				title.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
 	}
 
 	private void updateTaskTitle() throws ValidationException
@@ -251,8 +247,8 @@ public class TaskEditorActivity extends Activity
 
 	private boolean isDueDateSet()
 	{
-		return ! dueDate.getText().toString().trim().isEmpty() &&
-				! dueDate.getText().toString().equals(getResources().getString(R.string.due_date));
+		return !dueDate.getText().toString().trim().isEmpty() &&
+				!dueDate.getText().toString().equals(getResources().getString(R.string.due_date));
 	}
 
 	private void updateTaskDue() throws ValidationException
@@ -267,8 +263,7 @@ public class TaskEditorActivity extends Activity
 			{
 				throw new ValidationException(R.string.error_invalud_due_date);
 			}
-		}
-		else
+		} else
 		{
 			task.setDue(null);
 		}

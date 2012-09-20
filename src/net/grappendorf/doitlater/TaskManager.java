@@ -42,7 +42,7 @@ public interface TaskManager
 	 * object will be null.
 	 *
 	 * @param taskList The name of the task list that contains the task
-	 * @param taskId The id of the task to fetch
+	 * @param taskId   The id of the task to fetch
 	 * @param activity The activity that calls the service method
 	 * @param callback A handler to be called back with the retrieved task
 	 */
@@ -54,7 +54,7 @@ public interface TaskManager
 	 * object will be null.
 	 *
 	 * @param taskList The name of the task list that contains the task
-	 * @param task The task containing the updated attributes
+	 * @param task     The task containing the updated attributes
 	 * @param activity The activity that calls the service method
 	 * @param callback A handler to be called back with the updated task
 	 */
@@ -66,7 +66,7 @@ public interface TaskManager
 	 * message object will be null.
 	 *
 	 * @param taskList The name of the task list that contains the task
-	 * @param taskId The id of the task to delete
+	 * @param taskId   The id of the task to delete
 	 * @param activity The activity that calls the service method
 	 * @param callback A handler to be called back with the id of the deleted task
 	 */
@@ -78,7 +78,7 @@ public interface TaskManager
 	 * object will be null.
 	 *
 	 * @param taskList The name of the task list that contains the task
-	 * @param taskId The id of the task to delete
+	 * @param taskId   The id of the task to delete
 	 * @param activity The activity that calls the service method
 	 * @param callback A handler to be called back with the completed task
 	 */
@@ -89,13 +89,13 @@ public interface TaskManager
 	 * back through the provided callback as the message object. In case of an error, the message
 	 * object will be null.
 	 *
-     * @param taskList The name of the task list that will contane task
-     * @param task The task to create
-     * @param previousTaskId Id of the task, after which the new one should be created. If null,
-     *                       the new task is created at the top of the list
-     * @param activity The activity that calls the service method
-     * @param callback A handler to be called back with the completed task
-     */
+	 * @param taskList       The name of the task list that will contane task
+	 * @param task           The task to create
+	 * @param previousTaskId Id of the task, after which the new one should be created. If null,
+	 *                       the new task is created at the top of the list
+	 * @param activity       The activity that calls the service method
+	 * @param callback       A handler to be called back with the completed task
+	 */
 	void createTask(String taskList, Task task, String previousTaskId, TaskEditorActivity activity, Handler callback);
 
 	void chooseAccount(Activity activity);
