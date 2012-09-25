@@ -43,4 +43,7 @@
 	<string name="completing">Completing…</string>
 	<string name="create">Create</string>
 	<string name="creating">Creating…</string>
+	<string name="drag">Drag</string>
+	<string name="moving">Moving…</string>
+	<string name="move_task_error">The task couldn\'t be moved</string>
 </resources>

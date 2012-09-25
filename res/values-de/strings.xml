@@ -43,4 +43,7 @@
 	<string name="completing">Beenden…</string>
 	<string name="create">Erstellen</string>
 	<string name="creating">Erstellen…</string>
+	<string name="drag">Drag</string>
+	<string name="moving">Verschieben…</string>
+	<string name="move_task_error">Die Aufgabe konnte nicht verschoben werden</string>
 </resources>

@@ -96,7 +96,9 @@ public interface TaskManager
 	 * @param activity       The activity that calls the service method
 	 * @param callback       A handler to be called back with the completed task
 	 */
-	void createTask(String taskList, Task task, String previousTaskId, TaskEditorActivity activity, Handler callback);
+	void createTask(String taskList, Task task, String previousTaskId, Activity activity, Handler callback);
+
+	void moveTask(String taskList, Task task, String previousTaskId, Activity activity, Handler callback);
 
 	void chooseAccount(Activity activity);
 

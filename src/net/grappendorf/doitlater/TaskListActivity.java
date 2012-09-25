@@ -26,14 +26,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.*;
 import com.google.api.services.tasks.model.Task;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -51,6 +49,10 @@ public class TaskListActivity extends ListActivity
 
 	private List<Task> tasks;
 
+	private DragSortListView listView;
+
+	private boolean dragEnabled;
+
 	public TaskListActivity()
 	{
 		activity = this;
@@ -60,8 +62,11 @@ public class TaskListActivity extends ListActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		dragEnabled = false;
 		setContentView(R.layout.task_list);
 		registerForContextMenu(getListView());
+		listView = (DragSortListView) getListView();
+		listView.setDropListener(onDragDrop);
 		loadTaskItems();
 	}
 
@@ -126,6 +131,43 @@ public class TaskListActivity extends ListActivity
 		return super.onContextItemSelected(item);
 	}
 
+	private DragSortListView.DropListener onDragDrop =
+			new DragSortListView.DropListener()
+			{
+				@Override
+				public void drop(final int from, final int to)
+				{
+					if (from == to)
+					{
+						return;
+					}
+
+					final Task task = tasks.get(from);
+					int previousPos = (to > from) ? to : to - 1;
+					String previousTaksId = (previousPos >= 0) ? tasks.get(previousPos).getId() : null;
+
+					final TaskListAdapter listAdapter = (TaskListAdapter) getListAdapter();
+					listAdapter.remove(task);
+					listAdapter.insert(task, to);
+
+					((DoItLaterApplication) getApplication()).getTaskManager().moveTask("@default", task,
+							previousTaksId, activity, new Handler()
+					{
+						@Override
+						@SuppressWarnings("unchecked")
+						public void handleMessage(Message msg)
+						{
+							if (msg.obj == null)
+							{
+								listAdapter.remove(task);
+								listAdapter.insert(task, from);
+								Toast.makeText(activity.getApplicationContext(), R.string.move_task_error, Toast.LENGTH_LONG).show();
+							}
+						}
+					});
+				}
+			};
+
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id)
 	{
@@ -160,6 +202,20 @@ public class TaskListActivity extends ListActivity
 	public void onReload(@SuppressWarnings("unused") View source)
 	{
 		loadTaskItems();
+	}
+
+	public void onFilter(@SuppressWarnings("unused") View source)
+	{
+	}
+
+	public void onSort(@SuppressWarnings("unused") View source)
+	{
+	}
+
+	public void onDrag(@SuppressWarnings("unused") View source)
+	{
+		dragEnabled = !dragEnabled;
+		showTasksItems();
 	}
 
 	public void onCreateTask(@SuppressWarnings("unused") View source)
@@ -262,17 +318,27 @@ public class TaskListActivity extends ListActivity
 			@SuppressWarnings("unchecked")
 			public void handleMessage(Message msg)
 			{
-				if (msg.obj != null)
-				{
-					tasks = (List<Task>) msg.obj;
-					setListAdapter(new TaskListAdapter(activity, tasks));
-				}
-				else
-				{
-					showErrorMessageInList();
-				}
+				tasks = (List<Task>) msg.obj;
+				showTasksItems();
 			}
 		});
+	}
+
+	private void showTasksItems()
+	{
+		if (tasks != null)
+		{
+			int topIndex = listView.getFirstVisiblePosition();
+			View topView = listView.getChildAt(0);
+			int topPos = (topView == null) ? 0 : topView.getTop();
+			setListAdapter(new TaskListAdapter(activity, tasks,
+					dragEnabled ? R.layout.task_list_item_dragable : R.layout.task_list_item));
+			listView.setSelectionFromTop(topIndex, topPos);
+		}
+		else
+		{
+			showErrorMessageInList();
+		}
 	}
 
 	private void updateTaskItem(final String taskId)

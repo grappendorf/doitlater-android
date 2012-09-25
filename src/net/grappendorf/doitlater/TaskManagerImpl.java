@@ -376,7 +376,7 @@ public class TaskManagerImpl implements TaskManager
 	}
 
 	@Override
-	public void createTask(final String taskList, final Task task, final String previousTaskId, final TaskEditorActivity activity, final Handler callback)
+	public void createTask(final String taskList, final Task task, final String previousTaskId, final Activity activity, final Handler callback)
 	{
 		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.creating)
 		{
@@ -388,6 +388,34 @@ public class TaskManagerImpl implements TaskManager
 					Tasks.TasksOperations.Insert insert = tasksService.tasks().insert(taskList, task);
 					insert.setPrevious(previousTaskId);
 					Task result = insert.execute();
+					callback.sendMessage(callback.obtainMessage(0, result));
+					asyncTaskByActivity.remove(activity);
+					onRequestCompleted();
+				} catch (IOException e)
+				{
+					handleApiException(activity, callback, e);
+				}
+				return null;
+			}
+		};
+		asyncTaskByActivity.put(activity, asyncTask);
+		executeAsyncTaskWhenAuthenticated(activity);
+	}
+
+	@Override
+	public void moveTask(final String taskList, final Task task, final String previousTaskId, final Activity activity, final Handler callback)
+	{
+		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.moving)
+		{
+			@Override
+			protected Void doInBackground(Void... voids)
+			{
+				try
+				{
+
+					Tasks.TasksOperations.Move move = tasksService.tasks().move(taskList, task.getId());
+					move.setPrevious(previousTaskId);
+					Task result = move.execute();
 					callback.sendMessage(callback.obtainMessage(0, result));
 					asyncTaskByActivity.remove(activity);
 					onRequestCompleted();

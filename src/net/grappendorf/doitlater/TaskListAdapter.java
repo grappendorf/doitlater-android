@@ -31,9 +31,12 @@ import java.util.List;
 
 public class TaskListAdapter extends ArrayAdapter<Task>
 {
-	public TaskListAdapter(Context context, List<Task> tasks)
+	private int itemViewResourceId;
+
+	public TaskListAdapter(Context context, List<Task> tasks, int itemViewResourceId)
 	{
-		super(context, R.layout.task_list_item, R.id.title, tasks);
+		super(context, itemViewResourceId, R.id.title, tasks);
+		this.itemViewResourceId = itemViewResourceId;
 	}
 
 	private static class ViewHolder
@@ -64,7 +67,7 @@ public class TaskListAdapter extends ArrayAdapter<Task>
 	{
 		View row = convertView != null ?
 				convertView :
-				LayoutInflater.from(getContext()).inflate(R.layout.task_list_item, parent, false);
+				LayoutInflater.from(getContext()).inflate(itemViewResourceId, parent, false);
 		ViewHolder viewHolder = ViewHolder.from(row);
 		Task task = getItem(position);
 		if (task == null)
