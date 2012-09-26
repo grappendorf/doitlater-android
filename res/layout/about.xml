@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  android:orientation="vertical"
+			  android:layout_width="fill_parent"
+			  android:layout_height="fill_parent">
+	<TextView android:text="@string/about_title"
+			  android:layout_width="wrap_content"
+			  android:layout_height="wrap_content"
+			  android:layout_gravity="center_horizontal"
+			android:textSize="10pt"/>
+	<TextView android:text="@string/about_copyright"
+			  android:layout_width="wrap_content"
+			  android:layout_height="wrap_content"
+			  android:layout_gravity="center_horizontal"
+			  android:gravity="center_horizontal"
+			  android:layout_marginTop="8dp"/>
+	<TextView android:text="@string/about_license"
+			  android:layout_width="wrap_content"
+			  android:layout_height="wrap_content"
+			  android:layout_gravity="center_horizontal"
+			  android:gravity="center_horizontal"
+			  android:layout_marginTop="8dp"/>
+	<TextView android:text="@string/about_thirdparty"
+			  android:layout_width="wrap_content"
+			  android:layout_height="wrap_content"
+			  android:layout_gravity="center_horizontal"
+			  android:gravity="center_horizontal"
+			  android:layout_marginTop="8dp"/>
+	<Button android:id="@+id/ok" android:text="@string/ok" android:drawableLeft="@drawable/ok"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:onClick="onOk"
+			android:layout_marginTop="24dp"/>
+</LinearLayout>

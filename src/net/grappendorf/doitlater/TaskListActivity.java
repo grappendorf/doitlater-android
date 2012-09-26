@@ -96,6 +96,11 @@ public class TaskListActivity extends ListActivity
 				startActivity(preferencesActivity);
 				return true;
 
+			case R.id.about:
+				Intent aboutActivity = new Intent(getBaseContext(), AboutActivity.class);
+				startActivity(aboutActivity);
+				return true;
+
 			case R.id.exit:
 				finish();
 		}

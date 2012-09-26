@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">Do it later!</string>
+	<string name="about_title">Do It Later!</string>
+	<string name="about_copyright">
+		©2012 Dirk Grappendorf\n
+		www.grappendorf.net\n
+		github.com/grappendorf/doitlater-android
+	</string>
+	<string name="about_license">
+		Licensed under the\n
+		Apache License, Version 2.0\n
+		www.apache.org/licenses/LICENSE-2.0\n
+	</string>
+	<string name="about_thirdparty">
+		Third party software:\n\n
+		Nuvola Icons - David Vignoni\nwww.icon-king.com/projects/nuvola\nLGPL License V2.1\n\n
+		DragSortListView (DSLV) - Carl Bauer\ngithub.com/bauerca/drag-sort-listview\nApache License, Version 2.0
+	</string>
 	<string name="dummy_task_title">Complete this application</string>
 	<string name="dummy_task_description">ASAP</string>
 	<string name="completed_on">Completed on %1$s</string>
@@ -46,4 +62,6 @@
 	<string name="drag">Drag</string>
 	<string name="moving">Moving…</string>
 	<string name="move_task_error">The task couldn\'t be moved</string>
+	<string name="about">About</string>
+	<string name="ok">OK</string>
 </resources>
