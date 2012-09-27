@@ -17,8 +17,11 @@
 	<ImageView
 			android:id="@id/drag"
 			android:layout_width="wrap_content"
-			android:layout_height="fill_parent"
-			android:background="@drawable/drag"
+			android:layout_height="wrap_content"
+			android:background="@drawable/move_vertically"
 			android:contentDescription="@string/drag"
-			android:layout_weight="0"/>
+			android:layout_weight="0"
+			android:layout_gravity="center"
+			android:layout_marginLeft="8pt"
+			android:layout_marginRight="2pt"/>
 </LinearLayout>
