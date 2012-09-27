@@ -6,7 +6,7 @@
 			  android:layout_height="fill_parent"
 		>
 	<LinearLayout android:orientation="horizontal" android:layout_width="fill_parent"
-				  android:layout_height="wrap_content">
+				  android:layout_height="wrap_content" style="@android:style/ButtonBar">
 		<ImageButton android:id="@+id/reload" android:layout_width="0dp"
 					 android:layout_height="wrap_content" android:src="@drawable/reload"
 					 android:contentDescription="@string/reload" android:layout_weight="1"
