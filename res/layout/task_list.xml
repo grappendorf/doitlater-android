@@ -11,8 +11,8 @@
 					 android:layout_height="wrap_content" android:src="@drawable/reload"
 					 android:contentDescription="@string/reload" android:layout_weight="1"
 					 android:onClick="onReload"/>
-		<ImageButton android:id="@+id/add" android:layout_width="0dp"
-					 android:layout_height="wrap_content" android:src="@drawable/add"
+		<ImageButton android:id="@+id/create" android:layout_width="0dp"
+					 android:layout_height="wrap_content" android:src="@drawable/create"
 					 android:contentDescription="@string/add" android:layout_weight="1"
 					 android:onClick="onCreateTask"/>
 		<ImageButton android:id="@+id/filter" android:layout_width="0dp"

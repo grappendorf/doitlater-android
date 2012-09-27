@@ -64,4 +64,8 @@
 	<string name="move_task_error">Die Aufgabe konnte nicht verschoben werden</string>
 	<string name="about">Über</string>
 	<string name="ok">Ok</string>
+	<string-array name="insert_positions">
+		<item>Einfügen am Anfang der Liste</item>
+		<item>Anhängen am Ende der Liste</item>
+	</string-array>
 </resources>

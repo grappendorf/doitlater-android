@@ -27,6 +27,8 @@
         <EditText android:id="@+id/notes" android:layout_width="fill_parent" android:layout_height="wrap_content"
                   android:inputType="textMultiLine" android:lines="8"
                   android:gravity="top" android:onClick="onNotesClicked" android:hint="@string/notes"/>
+		<Spinner android:id="@+id/insert_position" android:layout_width="fill_parent" android:layout_height="wrap_content"
+				 android:entries="@array/insert_positions"/>
         <LinearLayout android:orientation="horizontal"
                       android:layout_width="fill_parent" android:layout_height="wrap_content">
             <Button android:id="@+id/save" android:text="@string/save" android:drawableLeft="@drawable/ok"

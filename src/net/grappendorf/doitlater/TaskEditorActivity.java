@@ -30,7 +30,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import com.google.api.client.util.DateTime;
+import com.google.api.services.tasks.Tasks;
 import com.google.api.services.tasks.model.Task;
+import org.apache.http.impl.entity.EntityDeserializer;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -47,17 +49,25 @@ public class TaskEditorActivity extends Activity
 
 	private EditText notes;
 
+	private Spinner insertPosition;
+
+	public static final int INSERT_TOP = 0;
+
+	public static final int INSERT_BOTTOM = 1;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.task_editor);
 		setResult(RESULT_CANCELED);
+		String taskId = getIntent().getStringExtra("taskId");
 		completed = (CheckBox) findViewById(R.id.completed);
 		title = (EditText) findViewById(R.id.title);
 		dueDate = (EditText) findViewById(R.id.due_date);
 		notes = (EditText) findViewById(R.id.notes);
-		String taskId = getIntent().getStringExtra("taskId");
+		insertPosition = (Spinner) findViewById(R.id.insert_position);
+		insertPosition.setVisibility(taskId == null ? View.VISIBLE : View.GONE);
 		if (taskId != null)
 		{
 			((DoItLaterApplication) getApplication()).getTaskManager().getTask("@default", taskId, this, new Handler()
@@ -72,7 +82,8 @@ public class TaskEditorActivity extends Activity
 					updateNotesView();
 				}
 			});
-		} else
+		}
+		else
 		{
 			((Button) findViewById(R.id.save)).setText(R.string.create);
 			task = new Task();
@@ -142,12 +153,12 @@ public class TaskEditorActivity extends Activity
 			if (task.getId() != null)
 			{
 				updateTask();
-			} else
+			}
+			else
 			{
 				createTask();
 			}
-		}
-		catch (ValidationException e)
+		} catch (ValidationException e)
 		{
 			Toast.makeText(this, e.getErrorResourceId(), Toast.LENGTH_LONG).show();
 		}
@@ -166,7 +177,8 @@ public class TaskEditorActivity extends Activity
 					intent.putExtra("taskId", task.getId());
 					setResult(RESULT_OK, intent);
 					finish();
-				} else
+				}
+				else
 				{
 					Toast.makeText(getApplicationContext(), R.string.save_error, Toast.LENGTH_LONG).show();
 				}
@@ -176,7 +188,8 @@ public class TaskEditorActivity extends Activity
 
 	private void createTask()
 	{
-		String previousTaskId = getIntent().getStringExtra("lastTaskId");
+		final int insertAt = insertPosition.getSelectedItemPosition();
+		String previousTaskId = insertAt == INSERT_TOP ? null : getIntent().getStringExtra("lastTaskId");
 		((DoItLaterApplication) getApplication()).getTaskManager().createTask("@default", task, previousTaskId, this, new Handler()
 		{
 			@Override
@@ -187,9 +200,11 @@ public class TaskEditorActivity extends Activity
 					task = (Task) msg.obj;
 					Intent intent = new Intent();
 					intent.putExtra("taskId", task.getId());
+					intent.putExtra("insertedAt", insertAt);
 					setResult(RESULT_OK, intent);
 					finish();
-				} else
+				}
+				else
 				{
 					Toast.makeText(getApplicationContext(), R.string.save_error, Toast.LENGTH_LONG).show();
 				}
@@ -219,11 +234,13 @@ public class TaskEditorActivity extends Activity
 		{
 			task.setCompleted(new DateTime(System.currentTimeMillis(), 0));
 			task.setStatus("completed");
-		} else if (!completed.isChecked())
-		{
-			task.setCompleted(null);
-			task.setStatus("needsAction");
 		}
+		else
+			if (!completed.isChecked())
+			{
+				task.setCompleted(null);
+				task.setStatus("needsAction");
+			}
 	}
 
 	private void updateTitleView()
@@ -258,12 +275,12 @@ public class TaskEditorActivity extends Activity
 			try
 			{
 				task.setDue(new DateTime(DoItLaterApplication.parseDate(dueDate.getText().toString().trim()).getTime(), 0));
-			}
-			catch (ParseException e)
+			} catch (ParseException e)
 			{
 				throw new ValidationException(R.string.error_invalud_due_date);
 			}
-		} else
+		}
+		else
 		{
 			task.setDue(null);
 		}

@@ -198,7 +198,7 @@ public class TaskListActivity extends ListActivity
 			case REQUEST_TASK_CREATE:
 				if (resultCode == RESULT_OK)
 				{
-					ceateTaskItem(data.getStringExtra("taskId"));
+					ceateTaskItem(data.getStringExtra("taskId"), data.getIntExtra("insertedAt", 0));
 				}
 				break;
 		}
@@ -375,7 +375,7 @@ public class TaskListActivity extends ListActivity
 		});
 	}
 
-	private void ceateTaskItem(String taskId)
+	private void ceateTaskItem(String taskId, final int insertedAt)
 	{
 		((DoItLaterApplication) getApplication()).getTaskManager().getTask("@default", taskId, this, new Handler()
 		{
@@ -386,8 +386,18 @@ public class TaskListActivity extends ListActivity
 				if (msg.obj != null)
 				{
 					Task task = (Task) msg.obj;
-					tasks.add(task);
-					((ArrayAdapter<Task>) getListAdapter()).notifyDataSetChanged();
+					if (insertedAt == TaskEditorActivity.INSERT_TOP)
+					{
+						tasks.add(0, task);
+						((ArrayAdapter<Task>) getListAdapter()).notifyDataSetChanged();
+						listView.setSelection(0);
+					}
+					else
+					{
+						tasks.add(task);
+						((ArrayAdapter<Task>) getListAdapter()).notifyDataSetChanged();
+						listView.setSelection(tasks.size() - 1);
+					}
 				}
 			}
 		});

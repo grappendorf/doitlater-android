@@ -64,4 +64,8 @@
 	<string name="move_task_error">The task couldn\'t be moved</string>
 	<string name="about">About</string>
 	<string name="ok">OK</string>
+	<string-array name="insert_positions">
+		<item>Insert at top of the list</item>
+		<item>Append to end of the list</item>
+	</string-array>
 </resources>
