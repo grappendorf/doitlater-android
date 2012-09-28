@@ -31,10 +31,11 @@ public interface TaskManager
 	 * message object. In case of an error, the message object will be null.
 	 *
 	 * @param taskList The name of the task list to fetch
+	 * @param showCompleted Completed tasks are only fetched if this is true
 	 * @param activity The activity that calls the service method
 	 * @param callback A handler to be called back with the retrieved task list
 	 */
-	void listTasks(String taskList, String[] fields, Activity activity, Handler callback);
+	void listTasks(String taskList, String[] fields, boolean showCompleted, Activity activity, Handler callback);
 
 	/**
 	 * Retrieve a specific task. This method is asynchronous and the result is passed backed

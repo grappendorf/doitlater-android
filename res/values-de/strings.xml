@@ -17,6 +17,7 @@
 		Nuvola Icons - David Vignoni\nwww.icon-king.com/projects/nuvola\nLGPL License V2.1\n\n
 		DragSortListView (DSLV) - Carl Bauer\ngithub.com/bauerca/drag-sort-listview\nApache License, Version 2.0
 	</string>
+	<string name="not_implemented_yet">Noch nicht implementiert</string>
 	<string name="dummy_task_title">Diese Anwendung fertigstellen</string>
 	<string name="dummy_task_description">ASAP</string>
 	<string name="completed_on">Beendet am %1$s</string>
@@ -68,4 +69,6 @@
 		<item>Einfügen am Anfang der Liste</item>
 		<item>Anhängen am Ende der Liste</item>
 	</string-array>
+	<string name="show_completed_tasks">Abgeschlossene Aufgaben anzeigen</string>
+	<string name="apply">Anwenden</string>
 </resources>

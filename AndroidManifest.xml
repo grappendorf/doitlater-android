@@ -30,5 +30,8 @@
 		<activity
 				android:name=".AboutActivity"
 				android:label="@string/about"/>
+		<activity
+				android:name=".FilterSettingsActivity"
+				android:label="@string/filter"/>
 	</application>
 </manifest>

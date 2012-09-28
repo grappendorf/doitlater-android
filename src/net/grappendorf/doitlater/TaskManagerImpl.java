@@ -229,7 +229,8 @@ public class TaskManagerImpl implements TaskManager
 	}
 
 	@Override
-	public void listTasks(final String taskList, final String[] fields, final Activity activity, final Handler callback)
+	public void listTasks(final String taskList, final String[] fields, final boolean showCompleted,
+						  final Activity activity, final Handler callback)
 	{
 		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.loading)
 		{
@@ -248,6 +249,7 @@ public class TaskManagerImpl implements TaskManager
 					List<Task> tasks = tasksService.tasks().list(taskList)
 							.setFields(fieldsSpec.toString())
 							.setShowDeleted(false)
+							.setShowCompleted(showCompleted)
 							.execute().getItems();
 					callback.sendMessage(callback.obtainMessage(0, tasks));
 					asyncTaskByActivity.remove(activity);

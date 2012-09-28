@@ -23,10 +23,11 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import android.preference.PreferenceManager;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,6 +46,8 @@ public class TaskListActivity extends ListActivity
 
 	private static final int REQUEST_TASK_CREATE = GlobalActivityCodes.REQUEST_FIRST_USER + 1;
 
+	private static final int REQUEST_FILTER_SETTINGS = GlobalActivityCodes.REQUEST_FIRST_USER + 2;
+
 	private Activity activity;
 
 	private List<Task> tasks;
@@ -52,6 +55,8 @@ public class TaskListActivity extends ListActivity
 	private DragSortListView listView;
 
 	private boolean dragEnabled;
+
+	private SharedPreferences preferences;
 
 	public TaskListActivity()
 	{
@@ -62,6 +67,7 @@ public class TaskListActivity extends ListActivity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		preferences = PreferenceManager.getDefaultSharedPreferences(this);
 		dragEnabled = false;
 		setContentView(R.layout.task_list);
 		registerForContextMenu(getListView());
@@ -201,6 +207,13 @@ public class TaskListActivity extends ListActivity
 					ceateTaskItem(data.getStringExtra("taskId"), data.getIntExtra("insertedAt", 0));
 				}
 				break;
+
+			case REQUEST_FILTER_SETTINGS:
+				if (resultCode == RESULT_OK)
+				{
+					loadTaskItems();
+				}
+				break;
 		}
 	}
 
@@ -211,10 +224,13 @@ public class TaskListActivity extends ListActivity
 
 	public void onFilter(@SuppressWarnings("unused") View source)
 	{
+		Intent filterIntent = new Intent(getBaseContext(), FilterSettingsActivity.class);
+		startActivityForResult(filterIntent, REQUEST_FILTER_SETTINGS);
 	}
 
 	public void onSort(@SuppressWarnings("unused") View source)
 	{
+		Toast.makeText(activity.getApplicationContext(), R.string.not_implemented_yet, Toast.LENGTH_LONG).show();
 	}
 
 	public void onDrag(@SuppressWarnings("unused") View source)
@@ -317,7 +333,8 @@ public class TaskListActivity extends ListActivity
 	private void loadTaskItems()
 	{
 		((DoItLaterApplication) getApplication()).getTaskManager().listTasks("@default",
-				new String[]{"title", "due", "completed"}, this, new Handler()
+				new String[]{"title", "due", "completed"},
+				preferences.getBoolean("show_completed", false), this, new Handler()
 		{
 			@Override
 			@SuppressWarnings("unchecked")

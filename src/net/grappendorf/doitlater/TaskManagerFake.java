@@ -72,7 +72,7 @@ public class TaskManagerFake implements TaskManager
 	}
 
 	@Override
-	public void listTasks(String taskList, String[] fields, Activity activity, Handler callback)
+	public void listTasks(String taskList, String[] fields, boolean showCompleted, Activity activity, Handler callback)
 	{
 		callback.sendMessage(callback.obtainMessage(0, tasks));
 	}
