@@ -332,9 +332,11 @@ public class TaskListActivity extends ListActivity
 
 	private void loadTaskItems()
 	{
+		FilterOptions filter = new FilterOptions();
+		filter.showCompleted = preferences.getBoolean("show_completed", false);
 		((DoItLaterApplication) getApplication()).getTaskManager().listTasks("@default",
 				new String[]{"title", "due", "completed"},
-				preferences.getBoolean("show_completed", false), this, new Handler()
+				filter, this, new Handler()
 		{
 			@Override
 			@SuppressWarnings("unchecked")
