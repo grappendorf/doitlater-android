@@ -28,14 +28,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 import com.google.api.services.tasks.model.Task;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import net.grappendorf.doitlater.dragsortlistview.DragSortListView;
+import net.grappendorf.doitlater.quickaction.ActionItem;
+import net.grappendorf.doitlater.quickaction.QuickAction;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -58,6 +63,10 @@ public class TaskListActivity extends ListActivity
 
 	private SharedPreferences preferences;
 
+	private QuickAction taskQuickAction;
+
+	private int clickedItemPos;
+
 	public TaskListActivity()
 	{
 		activity = this;
@@ -73,7 +82,60 @@ public class TaskListActivity extends ListActivity
 		registerForContextMenu(getListView());
 		listView = (DragSortListView) getListView();
 		listView.setDropListener(onDragDrop);
+		listView.setOnItemLongClickListener(onLongClick);
+		createTaskQuickAction();
 		loadTaskItems();
+	}
+
+	private void createTaskQuickAction()
+	{
+		taskQuickAction = new QuickAction(this);
+		ActionItem editItem = new ActionItem();
+		editItem.setTitle(getString(R.string.edit));
+		editItem.setIcon(getResources().getDrawable(R.drawable.edit));
+		editItem.setHandler(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				onEditTask(((Task) getListAdapter().getItem(clickedItemPos)).getId());
+			}
+		});
+		taskQuickAction.addActionItem(editItem);
+		ActionItem completeItem = new ActionItem();
+		completeItem.setTitle(getString(R.string.complete));
+		completeItem.setIcon(getResources().getDrawable(R.drawable.ok));
+		completeItem.setHandler(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				onCompleteTask(((Task) getListAdapter().getItem(clickedItemPos)).getId(),
+						((Task) getListAdapter().getItem(clickedItemPos)).getTitle());
+			}
+		});
+		taskQuickAction.addActionItem(completeItem);
+		ActionItem deleteItem = new ActionItem();
+		deleteItem.setTitle(getString(R.string.delete));
+		deleteItem.setIcon(getResources().getDrawable(R.drawable.delete));
+		deleteItem.setHandler(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				onDeleteTask(((Task) getListAdapter().getItem(clickedItemPos)).getId(),
+						((Task) getListAdapter().getItem(clickedItemPos)).getTitle());
+			}
+		});
+		taskQuickAction.addActionItem(deleteItem);
+		taskQuickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener()
+		{
+			@Override
+			public void onItemClick(QuickAction source, int pos, int actionId)
+			{
+				taskQuickAction.getActionItem(pos).callHandler();
+			}
+		});
 	}
 
 	@Override
@@ -113,34 +175,17 @@ public class TaskListActivity extends ListActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
-	{
-		getMenuInflater().inflate(R.menu.task_list_context_menu, menu);
-	}
-
-	@Override
-	public boolean onContextItemSelected(MenuItem item)
-	{
-		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-		switch (item.getItemId())
-		{
-			case R.id.edit:
-				onEditTask(((Task) getListAdapter().getItem(info.position)).getId());
-				break;
-
-			case R.id.complete:
-				onCompleteTask(((Task) getListAdapter().getItem(info.position)).getId(),
-						((Task) getListAdapter().getItem(info.position)).getTitle());
-				break;
-
-			case R.id.delete:
-				onDeleteTask(((Task) getListAdapter().getItem(info.position)).getId(),
-						((Task) getListAdapter().getItem(info.position)).getTitle());
-				break;
-		}
-		return super.onContextItemSelected(item);
-	}
+	private ListView.OnItemLongClickListener onLongClick =
+			new ListView.OnItemLongClickListener()
+			{
+				@Override
+				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+				{
+					clickedItemPos = position;
+					taskQuickAction.show(view);
+					return true;
+				}
+			};
 
 	private DragSortListView.DropListener onDragDrop =
 			new DragSortListView.DropListener()

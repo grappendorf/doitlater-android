@@ -29,7 +29,7 @@
 					 android:onClick="onDrag"/>
 		<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text=""/>
 	</LinearLayout>
-	<net.grappendorf.doitlater.DragSortListView
+	<net.grappendorf.doitlater.dragsortlistview.DragSortListView
 			android:id="@android:id/list"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"

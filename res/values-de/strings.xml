@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<string name="_">_</string>
 	<string name="app_name">Do it later!</string>
 	<string name="about_title">Do It Later!</string>
 	<string name="about_copyright">
@@ -15,7 +16,8 @@
 	<string name="about_thirdparty">
 		Third party software:\n\n
 		Nuvola Icons - David Vignoni\nwww.icon-king.com/projects/nuvola\nLGPL License V2.1\n\n
-		DragSortListView (DSLV) - Carl Bauer\ngithub.com/bauerca/drag-sort-listview\nApache License, Version 2.0
+		DragSortListView (DSLV) - Carl Bauer\ngithub.com/bauerca/drag-sort-listview\nApache License, Version 2.0\n\n
+		NewQuickAction - Lorensius W. L. T\nhttps://github.com/lorensiuswlt/NewQuickAction\nApache License, Version 2.0
 	</string>
 	<string name="not_implemented_yet">Noch nicht implementiert</string>
 	<string name="dummy_task_title">Diese Anwendung fertigstellen</string>

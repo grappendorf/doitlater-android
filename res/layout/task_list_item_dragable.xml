@@ -4,7 +4,7 @@
 			  android:layout_width="fill_parent" android:layout_height="wrap_content">
 	<LinearLayout android:orientation="vertical" android:layout_width="0dp"
 				  android:layout_height="wrap_content" android:layout_weight="1"
-				  android:paddingTop="1pt" android:paddingBottom="1pt">
+				  android:paddingTop="2pt" android:paddingBottom="2pt">
 		<TextView android:id="@+id/title"
 				  android:layout_width="fill_parent" android:layout_height="wrap_content"
 				  android:text="@string/dummy_task_title"
@@ -23,5 +23,5 @@
 			android:layout_weight="0"
 			android:layout_gravity="center"
 			android:layout_marginLeft="8pt"
-			android:layout_marginRight="2pt"/>
+			android:layout_marginRight="6pt"/>
 </LinearLayout>

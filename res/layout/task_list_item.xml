@@ -2,7 +2,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"
 			  android:layout_width="fill_parent" android:layout_height="wrap_content"
-			  android:paddingTop="1pt" android:paddingBottom="1pt">
+			  android:paddingTop="2pt" android:paddingBottom="2pt">
 	<TextView android:id="@+id/title"
 			  android:layout_width="fill_parent" android:layout_height="wrap_content"
 			  android:text="@string/dummy_task_title"
