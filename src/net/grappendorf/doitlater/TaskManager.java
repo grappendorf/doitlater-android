@@ -24,19 +24,25 @@ import com.google.api.services.tasks.model.Task;
 
 public interface TaskManager
 {
-	void listTasks(String taskList, String[] fields, FilterOptions filter, Activity activity, Handler callback);
+	String getDefaultTaskListId();
 
-	void getTask(String taskList, String taskId, Activity activity, Handler callback);
+	void listTaskLists(Activity activity, Handler callback);
 
-	void updateTask(String taskList, Task task, Activity activity, Handler callback);
+	void getTaskList(String taskListId, Activity activity, Handler callback);
 
-	void deleteTask(String taskList, String taskId, Activity activity, Handler callback);
+	void listTasks(String taskListId, String[] fields, FilterOptions filter, Activity activity, Handler callback);
 
-	void completeTask(String taskList, String taskId, Activity activity, Handler callback);
+	void getTask(String taskListId, String taskId, Activity activity, Handler callback);
 
-	void createTask(String taskList, Task task, String previousTaskId, Activity activity, Handler callback);
+	void updateTask(String taskListId, Task task, Activity activity, Handler callback);
 
-	void moveTask(String taskList, Task task, String previousTaskId, Activity activity, Handler callback);
+	void deleteTask(String taskListId, String taskId, Activity activity, Handler callback);
+
+	void completeTask(String taskListId, String taskId, Activity activity, Handler callback);
+
+	void createTask(String taskListId, Task task, String previousTaskId, Activity activity, Handler callback);
+
+	void moveTask(String taskListId, Task task, String previousTaskId, Activity activity, Handler callback);
 
 	void chooseAccount(Activity activity);
 

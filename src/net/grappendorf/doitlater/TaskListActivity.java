@@ -36,6 +36,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.google.api.services.tasks.model.Task;
+import com.google.api.services.tasks.model.TaskList;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import net.grappendorf.doitlater.dragsortlistview.DragSortListView;
@@ -55,17 +56,19 @@ public class TaskListActivity extends ListActivity
 
 	private Activity activity;
 
-	private List<Task> tasks;
+	private SharedPreferences preferences;
 
 	private DragSortListView listView;
 
-	private boolean dragEnabled;
-
-	private SharedPreferences preferences;
-
 	private QuickAction taskQuickAction;
 
+	private boolean dragEnabled;
+
 	private int clickedItemPos;
+
+	private TaskList taskList;
+
+	private List<Task> tasks;
 
 	public TaskListActivity()
 	{
@@ -84,7 +87,7 @@ public class TaskListActivity extends ListActivity
 		listView.setDropListener(onDragDrop);
 		listView.setOnItemLongClickListener(onLongClick);
 		createTaskQuickAction();
-		loadTaskItems();
+		loadTaskList();
 	}
 
 	private void createTaskQuickAction()
@@ -138,6 +141,18 @@ public class TaskListActivity extends ListActivity
 		});
 	}
 
+	private ListView.OnItemLongClickListener onLongClick =
+			new ListView.OnItemLongClickListener()
+			{
+				@Override
+				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+				{
+					clickedItemPos = position;
+					taskQuickAction.show(view);
+					return true;
+				}
+			};
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -175,18 +190,6 @@ public class TaskListActivity extends ListActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	private ListView.OnItemLongClickListener onLongClick =
-			new ListView.OnItemLongClickListener()
-			{
-				@Override
-				public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
-				{
-					clickedItemPos = position;
-					taskQuickAction.show(view);
-					return true;
-				}
-			};
-
 	private DragSortListView.DropListener onDragDrop =
 			new DragSortListView.DropListener()
 			{
@@ -206,7 +209,7 @@ public class TaskListActivity extends ListActivity
 					listAdapter.remove(task);
 					listAdapter.insert(task, to);
 
-					((DoItLaterApplication) getApplication()).getTaskManager().moveTask("@default", task,
+					((DoItLaterApplication) getApplication()).getTaskManager().moveTask(taskList.getId(), task,
 							previousTaksId, activity, new Handler()
 					{
 						@Override
@@ -256,7 +259,7 @@ public class TaskListActivity extends ListActivity
 			case REQUEST_FILTER_SETTINGS:
 				if (resultCode == RESULT_OK)
 				{
-					loadTaskItems();
+					loadTaskList();
 				}
 				break;
 		}
@@ -289,6 +292,7 @@ public class TaskListActivity extends ListActivity
 		Intent intent = new Intent(this, TaskEditorActivity.class);
 		if (tasks.size() > 0)
 		{
+			intent.putExtra("taskListId", taskList.getId());
 			intent.putExtra("lastTaskId", tasks.get(tasks.size() - 1).getId());
 		}
 		startActivityForResult(intent, REQUEST_TASK_CREATE);
@@ -297,6 +301,7 @@ public class TaskListActivity extends ListActivity
 	private void onEditTask(String taskId)
 	{
 		Intent intent = new Intent(this, TaskEditorActivity.class);
+		intent.putExtra("taskListId", taskList.getId());
 		intent.putExtra("taskId", taskId);
 		startActivityForResult(intent, REQUEST_TASK_EDIT);
 	}
@@ -313,7 +318,7 @@ public class TaskListActivity extends ListActivity
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i)
 					{
-						((DoItLaterApplication) getApplication()).getTaskManager().deleteTask("@default", taskId, activity, new Handler()
+						((DoItLaterApplication) getApplication()).getTaskManager().deleteTask(taskList.getId(), taskId, activity, new Handler()
 						{
 							@Override
 							@SuppressWarnings("unchecked")
@@ -322,10 +327,7 @@ public class TaskListActivity extends ListActivity
 								if (msg.obj != null)
 								{
 									String taskId = (String) msg.obj;
-									if (taskId != null)
-									{
-										deleteTaskItem(taskId);
-									}
+									deleteTaskItem(taskId);
 								}
 								else
 								{
@@ -350,7 +352,7 @@ public class TaskListActivity extends ListActivity
 					@Override
 					public void onClick(DialogInterface dialogInterface, int i)
 					{
-						((DoItLaterApplication) getApplication()).getTaskManager().completeTask("@default", taskId, activity, new Handler()
+						((DoItLaterApplication) getApplication()).getTaskManager().completeTask(taskList.getId(), taskId, activity, new Handler()
 						{
 							@Override
 							@SuppressWarnings("unchecked")
@@ -359,10 +361,7 @@ public class TaskListActivity extends ListActivity
 								if (msg.obj != null)
 								{
 									Task task = (Task) msg.obj;
-									if (task != null)
-									{
-										completeTaskItem(task);
-									}
+									completeTaskItem(task);
 								}
 								else
 								{
@@ -375,11 +374,30 @@ public class TaskListActivity extends ListActivity
 				.show();
 	}
 
+	private void loadTaskList()
+	{
+		String taskListId = preferences.getString("taskListId", ((DoItLaterApplication) getApplication()).getTaskManager().getDefaultTaskListId());
+		((DoItLaterApplication) getApplication()).getTaskManager().getTaskList(taskListId, this, new Handler()
+		{
+			@Override
+			@SuppressWarnings("unchecked")
+			public void handleMessage(Message msg)
+			{
+				if (msg.obj != null)
+				{
+					taskList = (TaskList) msg.obj;
+					setTitle(getString(R.string.task_list_activity_title, taskList.getTitle()));
+					loadTaskItems();
+				}
+			}
+		});
+	}
+
 	private void loadTaskItems()
 	{
 		FilterOptions filter = new FilterOptions();
-		filter.showCompleted = preferences.getBoolean("show_completed", false);
-		((DoItLaterApplication) getApplication()).getTaskManager().listTasks("@default",
+		filter.showCompleted = preferences.getBoolean("showCompleted", false);
+		((DoItLaterApplication) getApplication()).getTaskManager().listTasks(taskList.getId(),
 				new String[]{"title", "due", "completed"},
 				filter, this, new Handler()
 		{
@@ -387,8 +405,11 @@ public class TaskListActivity extends ListActivity
 			@SuppressWarnings("unchecked")
 			public void handleMessage(Message msg)
 			{
-				tasks = (List<Task>) msg.obj;
-				showTasksItems();
+				if (msg.obj != null)
+				{
+					tasks = (List<Task>) msg.obj;
+					showTasksItems();
+				}
 			}
 		});
 	}
@@ -412,7 +433,7 @@ public class TaskListActivity extends ListActivity
 
 	private void updateTaskItem(final String taskId)
 	{
-		((DoItLaterApplication) getApplication()).getTaskManager().getTask("@default", taskId, this, new Handler()
+		((DoItLaterApplication) getApplication()).getTaskManager().getTask(taskList.getId(), taskId, this, new Handler()
 		{
 			@Override
 			@SuppressWarnings("unchecked")
@@ -441,7 +462,7 @@ public class TaskListActivity extends ListActivity
 
 	private void ceateTaskItem(String taskId, final int insertedAt)
 	{
-		((DoItLaterApplication) getApplication()).getTaskManager().getTask("@default", taskId, this, new Handler()
+		((DoItLaterApplication) getApplication()).getTaskManager().getTask(taskList.getId(), taskId, this, new Handler()
 		{
 			@Override
 			@SuppressWarnings("unchecked")

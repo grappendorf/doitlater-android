@@ -41,6 +41,8 @@ public class TaskEditorActivity extends Activity
 {
 	private Task task;
 
+	private String taskListId;
+
 	private CheckBox completed;
 
 	private EditText title;
@@ -62,6 +64,7 @@ public class TaskEditorActivity extends Activity
 		setContentView(R.layout.task_editor);
 		setResult(RESULT_CANCELED);
 		String taskId = getIntent().getStringExtra("taskId");
+		taskListId = getIntent().getStringExtra("taskListId");
 		completed = (CheckBox) findViewById(R.id.completed);
 		title = (EditText) findViewById(R.id.title);
 		dueDate = (EditText) findViewById(R.id.due_date);
@@ -70,7 +73,7 @@ public class TaskEditorActivity extends Activity
 		insertPosition.setVisibility(taskId == null ? View.VISIBLE : View.GONE);
 		if (taskId != null)
 		{
-			((DoItLaterApplication) getApplication()).getTaskManager().getTask("@default", taskId, this, new Handler()
+			((DoItLaterApplication) getApplication()).getTaskManager().getTask(taskListId, taskId, this, new Handler()
 			{
 				@Override
 				public void handleMessage(Message msg)
@@ -166,7 +169,7 @@ public class TaskEditorActivity extends Activity
 
 	private void updateTask()
 	{
-		((DoItLaterApplication) getApplication()).getTaskManager().updateTask("@default", task, this, new Handler()
+		((DoItLaterApplication) getApplication()).getTaskManager().updateTask(taskListId, task, this, new Handler()
 		{
 			@Override
 			public void handleMessage(Message msg)
@@ -190,7 +193,7 @@ public class TaskEditorActivity extends Activity
 	{
 		final int insertAt = insertPosition.getSelectedItemPosition();
 		String previousTaskId = insertAt == INSERT_TOP ? null : getIntent().getStringExtra("lastTaskId");
-		((DoItLaterApplication) getApplication()).getTaskManager().createTask("@default", task, previousTaskId, this, new Handler()
+		((DoItLaterApplication) getApplication()).getTaskManager().createTask(taskListId, task, previousTaskId, this, new Handler()
 		{
 			@Override
 			public void handleMessage(Message msg)

@@ -73,4 +73,7 @@
 	</string-array>
 	<string name="show_completed_tasks">Show completed tasks</string>
 	<string name="apply">Apply</string>
+	<string name="load_tasklists_error">The task lists couldn\'t be loaded</string>
+	<string name="default_">Default</string>
+	<string name="task_list_activity_title">Do it later! [%1$s]</string>
 </resources>

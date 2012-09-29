@@ -23,6 +23,7 @@ import android.content.Context;
 import android.os.Handler;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.tasks.model.Task;
+import com.google.api.services.tasks.model.TaskList;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -36,8 +37,21 @@ public class TaskManagerFake implements TaskManager
 
 	private Map<String, Task> tasksById = new HashMap<String, Task>();
 
+	private List<TaskList> taskLists = new LinkedList<TaskList>();
+
+	private Map<String, TaskList> taskListsById = new HashMap<String, TaskList>();
+
 	public TaskManagerFake(@SuppressWarnings("unused") Context context)
 	{
+		TaskList taskList = new TaskList();
+		taskList.setTitle("Default");
+		taskList.setId("@default");
+		taskLists.add(taskList);
+		taskList = new TaskList();
+		taskList.setTitle("Very Important");
+		taskList.setId("1");
+		taskLists.add(taskList);
+
 		Task task = new Task();
 		task.setId("1");
 		task.setTitle("Invent a new application");
@@ -72,39 +86,57 @@ public class TaskManagerFake implements TaskManager
 	}
 
 	@Override
-	public void listTasks(String taskList, String[] fields, FilterOptions filter, Activity activity, Handler callback)
+	public String getDefaultTaskListId()
+	{
+		return "@default";
+	}
+
+	@Override
+	public void listTaskLists(Activity activity, Handler callback)
+	{
+		callback.sendMessage(callback.obtainMessage(0, taskLists));
+	}
+
+	@Override
+	public void getTaskList(String taskListId, Activity activity, Handler callback)
+	{
+		callback.sendMessage(callback.obtainMessage(0, taskListsById.get(taskListId)));
+	}
+
+	@Override
+	public void listTasks(String taskListId, String[] fields, FilterOptions filter, Activity activity, Handler callback)
 	{
 		callback.sendMessage(callback.obtainMessage(0, tasks));
 	}
 
 	@Override
-	public void getTask(String taskList, String taskId, Activity activity, Handler callback)
+	public void getTask(String taskListId, String taskId, Activity activity, Handler callback)
 	{
 		callback.sendMessage(callback.obtainMessage(0, tasksById.get(taskId)));
 	}
 
 	@Override
-	public void updateTask(String taskList, Task task, Activity activity, Handler callback)
+	public void updateTask(String taskListId, Task task, Activity activity, Handler callback)
 	{
 	}
 
 	@Override
-	public void deleteTask(String taskList, String taskId, Activity activity, Handler callback)
+	public void deleteTask(String taskListId, String taskId, Activity activity, Handler callback)
 	{
 	}
 
 	@Override
-	public void completeTask(String taskList, String taskId, Activity activity, Handler callback)
+	public void completeTask(String taskListId, String taskId, Activity activity, Handler callback)
 	{
 	}
 
 	@Override
-	public void createTask(String taskList, Task task, String previousTaskId, Activity activity, Handler callback)
+	public void createTask(String taskListId, Task task, String previousTaskId, Activity activity, Handler callback)
 	{
 	}
 
 	@Override
-	public void moveTask(String taskList, Task task, String previousTaskId, Activity activity, Handler callback)
+	public void moveTask(String taskListId, Task task, String previousTaskId, Activity activity, Handler callback)
 	{
 	}
 

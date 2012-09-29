@@ -73,4 +73,7 @@
 	</string-array>
 	<string name="show_completed_tasks">Abgeschlossene Aufgaben anzeigen</string>
 	<string name="apply">Anwenden</string>
+	<string name="load_tasklists_error">Die Aufgabelisten konnten nicht geladen werden</string>
+	<string name="default_">Standard</string>
+	<string name="task_list_activity_title">Do it later! [%1$s]</string>
 </resources>

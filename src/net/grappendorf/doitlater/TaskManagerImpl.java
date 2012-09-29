@@ -39,6 +39,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.tasks.Tasks;
 import com.google.api.services.tasks.model.Task;
+import com.google.api.services.tasks.model.TaskList;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -229,7 +230,63 @@ public class TaskManagerImpl implements TaskManager
 	}
 
 	@Override
-	public void listTasks(final String taskList, final String[] fields, final FilterOptions filter,
+	public String getDefaultTaskListId()
+	{
+		return "@default";
+	}
+
+	@Override
+	public void listTaskLists(final Activity activity, final Handler callback)
+	{
+		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.loading)
+		{
+			@Override
+			protected Void doInBackground(Void... voids)
+			{
+				try
+				{
+					List<TaskList> taskLists = tasksService.tasklists().list().execute().getItems();
+					callback.sendMessage(callback.obtainMessage(0, taskLists));
+					asyncTaskByActivity.remove(activity);
+					onRequestCompleted();
+				} catch (IOException e)
+				{
+					handleApiException(activity, callback, e);
+				}
+				return null;
+			}
+		};
+		asyncTaskByActivity.put(activity, asyncTask);
+		executeAsyncTaskWhenAuthenticated(activity);
+	}
+
+	@Override
+	public void getTaskList(final String taskListId, final Activity activity, final Handler callback)
+	{
+		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.loading)
+		{
+			@Override
+			protected Void doInBackground(Void... voids)
+			{
+				try
+				{
+					TaskList taskList = tasksService.tasklists().get(taskListId).execute();
+					callback.sendMessage(callback.obtainMessage(0, taskList));
+					asyncTaskByActivity.remove(activity);
+					onRequestCompleted();
+				} catch (IOException e)
+				{
+					handleApiException(activity, callback, e);
+				}
+				return null;
+			}
+		};
+		asyncTaskByActivity.put(activity, asyncTask);
+		executeAsyncTaskWhenAuthenticated(activity);
+	}
+
+	@Override
+	public void listTasks(final String taskListId, final String[] fields, final FilterOptions filter,
 						  final Activity activity, final Handler callback)
 	{
 		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.loading)
@@ -246,7 +303,7 @@ public class TaskManagerImpl implements TaskManager
 						fieldsSpec.append(field);
 					}
 					fieldsSpec.append(")");
-					List<Task> tasks = tasksService.tasks().list(taskList)
+					List<Task> tasks = tasksService.tasks().list(taskListId)
 							.setFields(fieldsSpec.toString())
 							.setShowDeleted(false)
 							.setShowCompleted(filter.showCompleted)
@@ -266,7 +323,7 @@ public class TaskManagerImpl implements TaskManager
 	}
 
 	@Override
-	public void getTask(final String taskList, final String taskId, final Activity activity, final Handler callback)
+	public void getTask(final String taskListId, final String taskId, final Activity activity, final Handler callback)
 	{
 		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.loading)
 		{
@@ -275,7 +332,7 @@ public class TaskManagerImpl implements TaskManager
 			{
 				try
 				{
-					Task task = tasksService.tasks().get(taskList, taskId).execute();
+					Task task = tasksService.tasks().get(taskListId, taskId).execute();
 					callback.sendMessage(callback.obtainMessage(0, task));
 					asyncTaskByActivity.remove(activity);
 					onRequestCompleted();
@@ -291,7 +348,7 @@ public class TaskManagerImpl implements TaskManager
 	}
 
 	@Override
-	public void updateTask(final String taskList, final Task task, final Activity activity, final Handler callback)
+	public void updateTask(final String taskListId, final Task task, final Activity activity, final Handler callback)
 	{
 		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.saving)
 		{
@@ -300,7 +357,7 @@ public class TaskManagerImpl implements TaskManager
 			{
 				try
 				{
-					Task result = tasksService.tasks().update(taskList, task.getId(), task).execute();
+					Task result = tasksService.tasks().update(taskListId, task.getId(), task).execute();
 					callback.sendMessage(callback.obtainMessage(0, result));
 					asyncTaskByActivity.remove(activity);
 					onRequestCompleted();
@@ -316,7 +373,7 @@ public class TaskManagerImpl implements TaskManager
 	}
 
 	@Override
-	public void deleteTask(final String taskList, final String taskId, final Activity activity, final Handler callback)
+	public void deleteTask(final String taskListId, final String taskId, final Activity activity, final Handler callback)
 	{
 		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.deleting)
 		{
@@ -329,12 +386,12 @@ public class TaskManagerImpl implements TaskManager
 					// Otherwise the task would only be marked as deleted (in the Google
 					// Task web application the task then shows up under the 'Trash' view).
 
-					Task task = tasksService.tasks().get(taskList, taskId).execute();
+					Task task = tasksService.tasks().get(taskListId, taskId).execute();
 					task.setTitle("");
 					task.setNotes("");
 					task.setDue(null);
-					tasksService.tasks().update(taskList, taskId, task).execute();
-					tasksService.tasks().delete(taskList, taskId).execute();
+					tasksService.tasks().update(taskListId, taskId, task).execute();
+					tasksService.tasks().delete(taskListId, taskId).execute();
 					callback.sendMessage(callback.obtainMessage(0, taskId));
 					asyncTaskByActivity.remove(activity);
 					onRequestCompleted();
@@ -350,7 +407,7 @@ public class TaskManagerImpl implements TaskManager
 	}
 
 	@Override
-	public void completeTask(final String taskList, final String taskId, final Activity activity, final Handler callback)
+	public void completeTask(final String taskListId, final String taskId, final Activity activity, final Handler callback)
 	{
 		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.completing)
 		{
@@ -359,10 +416,10 @@ public class TaskManagerImpl implements TaskManager
 			{
 				try
 				{
-					Task task = tasksService.tasks().get(taskList, taskId).execute();
+					Task task = tasksService.tasks().get(taskListId, taskId).execute();
 					task.setCompleted(new DateTime(System.currentTimeMillis(), 0));
 					task.setStatus("completed");
-					Task result = tasksService.tasks().update(taskList, task.getId(), task).execute();
+					Task result = tasksService.tasks().update(taskListId, task.getId(), task).execute();
 					callback.sendMessage(callback.obtainMessage(0, result));
 					asyncTaskByActivity.remove(activity);
 					onRequestCompleted();
@@ -378,7 +435,7 @@ public class TaskManagerImpl implements TaskManager
 	}
 
 	@Override
-	public void createTask(final String taskList, final Task task, final String previousTaskId, final Activity activity, final Handler callback)
+	public void createTask(final String taskListId, final Task task, final String previousTaskId, final Activity activity, final Handler callback)
 	{
 		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.creating)
 		{
@@ -387,7 +444,7 @@ public class TaskManagerImpl implements TaskManager
 			{
 				try
 				{
-					Tasks.TasksOperations.Insert insert = tasksService.tasks().insert(taskList, task);
+					Tasks.TasksOperations.Insert insert = tasksService.tasks().insert(taskListId, task);
 					insert.setPrevious(previousTaskId);
 					Task result = insert.execute();
 					callback.sendMessage(callback.obtainMessage(0, result));
@@ -405,7 +462,7 @@ public class TaskManagerImpl implements TaskManager
 	}
 
 	@Override
-	public void moveTask(final String taskList, final Task task, final String previousTaskId, final Activity activity, final Handler callback)
+	public void moveTask(final String taskListId, final Task task, final String previousTaskId, final Activity activity, final Handler callback)
 	{
 		AsyncTask<Void, Void, Void> asyncTask = new AsyncTaskWithProgressDialog<Void, Void, Void>(activity, R.string.moving)
 		{
@@ -415,7 +472,7 @@ public class TaskManagerImpl implements TaskManager
 				try
 				{
 
-					Tasks.TasksOperations.Move move = tasksService.tasks().move(taskList, task.getId());
+					Tasks.TasksOperations.Move move = tasksService.tasks().move(taskListId, task.getId());
 					move.setPrevious(previousTaskId);
 					Task result = move.execute();
 					callback.sendMessage(callback.obtainMessage(0, result));
